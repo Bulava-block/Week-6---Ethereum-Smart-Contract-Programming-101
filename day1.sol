@@ -229,49 +229,97 @@ pragma solidity 0.5.12;
 
 contract HelloWorld{
 
+    // Objects with properties
     struct Person {
-
       uint id;
       string name;
       uint age;
       address creator;
     }
 
+    // people=[{id:1, name: "stas", age:1}, {id:2, a}....]
     Person[] private people;
-    mapping(address=>Person) private map;
-    uint[] private IDS;
 
-    function createPerson(string memory name, uint age, uint id) public {
+    // key and value pairs
+
+    //          key      value
+    // mapping(uint => address) map
+    //  set:   map[1] = msg.sender;
+    //  get:   address creator = map[1];
 
 
+    mapping(address => uint) private map;
 
+    // map[msg.sender] => {id:0, name....}
+    // map[msg.sender].creator
+    /*
+        Person memory person = map[msg.sender];
+        address creator = map[msg.sender].creator;
+    */
 
+    function createPerson(string memory name, uint age) public {
+
+        // Create a local variable of type Person
         Person memory newPerson;
-        map[msg.sender]=newPerson;
-        newPerson.id=id;
+
+        //Store the index of the last person created
+        map[msg.sender]= people.length;
+
+        newPerson.id = people.length;
         newPerson.name = name;
         newPerson.age=age;
         newPerson.creator=msg.sender;
+
+        // Add the newPerson to the people array
         people.push(newPerson);
-        IDS.push(id);
+
     }
 
 
     function  getPerson(uint index) public view returns(string memory name, uint age){
-
-
        return(
         people[index].name,
         people[index].age
-
-
         );
-
-
     }
 
+
+    // We create an array that contains all the IDS of the people;
+    // Loop through the array and remove the
+
+
+
+    // Get ids for the people created by msg.sender
+
+    // Will be called by different users
       function getIDS() public view returns(uint[] memory){
-          return IDS;
+
+          // msg.sender will be different
+            //   address sender = msg.sender;
+
+          // Create an temporal array to store the IDS
+
+          // ids will be an array with the same length as people array
+          uint[] memory ids = new uint[](people.length); // [0,0,0,0,0,0,0]
+
+          // the array that is returned start in 0
+          uint totalIds = 0;
+
+          // Loop through all people in the array
+          // We use i as the index that change by 1
+          for(uint i=0; i<people.length; i++){
+
+              // Check if the person in that index i of people array
+              // Check if the creator was the current user calling this function (msg.sender)
+              if(people[i].creator == msg.sender){ // 4
+
+                // when there is a math, store the age of the person and add it to the ids array
+                  ids[totalIds] = people[i].age;
+                  totalIds++;
+              }
+          }
+
+          return ids;  // [,,,5,,,,,]   [5, 4, 7]
       }
 
 
